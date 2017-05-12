@@ -132,7 +132,7 @@ Try {
 		}
 		
 		## <Perform Installation tasks here>
-		Execute-Process -Path "Anaconda3-4.3.1-Windows-x86_64.exe" -Parameters "/InstallationType=AllUsers /S /D=C:\Anaconda2"
+		Execute-Process -Path "Anaconda3-4.3.1-Windows-x86_64.exe" -Parameters "/InstallationType=AllUsers /S /D=C:\Anaconda3"
 		
 		##*===============================================
 		##* POST-INSTALLATION

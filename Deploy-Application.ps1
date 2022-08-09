@@ -129,6 +129,7 @@ Try {
 		## <Perform Pre-Installation tasks here>
 		If (Test-Path -path "$envSystemDrive\Anaconda3\Uninstall-Anaconda3.exe"){
 			Execute-Process -Path "$envSystemDrive\Anaconda3\Uninstall-Anaconda3.exe" -Parameters "/S" -WindowStyle "Hidden" -WaitForMsiExec
+			If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 			Write-Log -Message "Waiting for uninstaller..." -Source 'Pre-Installation' -LogType 'CMTrace'
 			Start-Sleep -s 120 # Wait for the uninstaller to actually finish
 		}
@@ -138,6 +139,7 @@ Try {
 
 		If (Test-Path -path "$envProgramData\Anaconda3\Uninstall-Anaconda3.exe"){
 			Execute-Process -Path "$envProgramData\Anaconda3\Uninstall-Anaconda3.exe" -Parameters "/S" -WindowStyle "Hidden" -WaitForMsiExec
+			If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 			Write-Log -Message "Waiting for uninstaller..." -Source 'Pre-Installation' -LogType 'CMTrace'
 			Start-Sleep -s 120 # Wait for the uninstaller to actually finish
 		}
@@ -206,6 +208,8 @@ Try {
 		# <Perform Uninstallation tasks here>
 		$exitCode = Execute-Process -Path "$env:ProgramData\Anaconda3\Uninstall-Anaconda3.exe" -Parameters "/S"
 		If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
+		Write-Log -Message "Waiting for uninstaller..." -Source 'Uninstallation' -LogType 'CMTrace'
+		Start-Sleep -s 120 # Wait for the uninstaller to actually finish
 
 
 		##*===============================================

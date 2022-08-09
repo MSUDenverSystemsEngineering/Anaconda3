@@ -129,6 +129,8 @@ Try {
 		## <Perform Pre-Installation tasks here>
 		If (Test-Path -path "$envSystemDrive\Anaconda3\Uninstall-Anaconda3.exe"){
 			Execute-Process -Path "$envSystemDrive\Anaconda3\Uninstall-Anaconda3.exe" -Parameters "/S" -WindowStyle "Hidden" -WaitForMsiExec
+			Write-Log -Message "Waiting for uninstaller..." -Source 'Pre-Installation' -LogType 'CMTrace'
+			Start-Sleep -s 120 # Wait for the uninstaller to actually finish
 		}
 		Else {
 			Write-Log -Message "Anaconda3 installation files not detected in $envSystemDrive\Anaconda3" -Source 'Pre-Installation' -LogType 'CMTrace'
@@ -136,12 +138,13 @@ Try {
 
 		If (Test-Path -path "$envProgramData\Anaconda3\Uninstall-Anaconda3.exe"){
 			Execute-Process -Path "$envProgramData\Anaconda3\Uninstall-Anaconda3.exe" -Parameters "/S" -WindowStyle "Hidden" -WaitForMsiExec
+			Write-Log -Message "Waiting for uninstaller..." -Source 'Pre-Installation' -LogType 'CMTrace'
+			Start-Sleep -s 120 # Wait for the uninstaller to actually finish
 		}
 		Else {
 			Write-Log -Message "Anaconda3 installation files not detected in $envProgramData\Anaconda3" -Source 'Pre-Installation' -LogType 'CMTrace'
 		}
-		Write-Log -Message "Waiting for uninstaller..." -Source 'Pre-Installation' -LogType 'CMTrace'
-		Start-Sleep -s 120 # Wait for the uninstaller to actually finish
+
 
 
 		##*===============================================

@@ -67,12 +67,12 @@ Try {
 	## Variables: Application
 	[string]$appVendor = 'Anaconda Inc.'
 	[string]$appName = 'Anaconda3'
-	[string]$appVersion = '2022.05'
+	[string]$appVersion = '2022.10'
 	[string]$appArch = 'x64'
 	[string]$appLang = 'EN'
 	[string]$appRevision = '01'
 	[string]$appScriptVersion = '1.0.1'
-	[string]$appScriptDate = '08/08/2022'
+	[string]$appScriptDate = '10/31/2022' ## Happy Halloween!
 	[string]$appScriptAuthor = 'Craig Myers'
 	##*===============================================
 	## Variables: Install Titles (Only set here to override defaults set by the toolkit)
@@ -131,22 +131,39 @@ Try {
 			Execute-Process -Path "$envSystemDrive\Anaconda3\Uninstall-Anaconda3.exe" -Parameters "/S" -WindowStyle "Hidden" -WaitForMsiExec
 			If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 			Write-Log -Message "Waiting for uninstaller..." -Source 'Pre-Installation' -LogType 'CMTrace'
-			Start-Sleep -s 120 # Wait for the uninstaller to actually finish
+			Start-Sleep -s 300 # Wait for the uninstaller to actually finish
 		}
 		Else {
 			Write-Log -Message "Anaconda3 installation files not detected in $envSystemDrive\Anaconda3" -Source 'Pre-Installation' -LogType 'CMTrace'
+		}
+		## Delete the installation
+		If (Test-Path "$envSystemDrive\Anaconda3\") {
+			Write-Log -Message "Deleting installation files..." -Source 'Pre-Installation' -LogType 'CMTrace'
+			Get-ChildItem -Path "$envSystemDrive\Anaconda3\" -Recurse | Remove-Item -force -recurse
+			Remove-Item "$envSystemDrive\Anaconda3\" -Force
+		}
+		Else {
+			Write-Log -Message "Installation files not detected." -Source 'Pre-Installation' -LogType 'CMTrace'
 		}
 
 		If (Test-Path -path "$envProgramData\Anaconda3\Uninstall-Anaconda3.exe"){
 			Execute-Process -Path "$envProgramData\Anaconda3\Uninstall-Anaconda3.exe" -Parameters "/S" -WindowStyle "Hidden" -WaitForMsiExec
 			If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 			Write-Log -Message "Waiting for uninstaller..." -Source 'Pre-Installation' -LogType 'CMTrace'
-			Start-Sleep -s 120 # Wait for the uninstaller to actually finish
+			Start-Sleep -s 300 # Wait for the uninstaller to actually finish
 		}
 		Else {
 			Write-Log -Message "Anaconda3 installation files not detected in $envProgramData\Anaconda3" -Source 'Pre-Installation' -LogType 'CMTrace'
 		}
-
+		## Delete the installation
+		If (Test-Path "$envProgramData\Anaconda3\") {
+			Write-Log -Message "Deleting installation files..." -Source 'Pre-Installation' -LogType 'CMTrace'
+			Get-ChildItem -Path "$envProgramData\Anaconda3\" -Recurse | Remove-Item -force -recurse
+			Remove-Item "$envProgramData\Anaconda3\" -Force
+		}
+		Else {
+			Write-Log -Message "Installation files not detected." -Source 'Pre-Installation' -LogType 'CMTrace'
+		}
 
 
 		##*===============================================
@@ -162,7 +179,7 @@ Try {
 
 		## <Perform Installation tasks here>
 		Write-Log -Message "Attempting to run installer..." -Source 'Installation' -LogType 'CMTrace'
-		$exitCode = Execute-Process -Path "Anaconda3-2022.05-Windows-x86_64.exe" -Parameters "/InstallationType=AllUsers /S /D=$env:ProgramData\Anaconda3"
+		$exitCode = Execute-Process -Path "Anaconda3-2022.10-Windows-x86_64.exe" -Parameters "/InstallationType=AllUsers /AddToPath=0 /S /D=$env:ProgramData\Anaconda3"
 		If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 
 
@@ -173,6 +190,11 @@ Try {
 		[string]$installPhase = 'Post-Installation'
 
 		## <Perform Post-Installation tasks here>
+
+		##Update all packages -- This part works, but it might be a better to do it separately in the interest of version control.
+		##Write-Log -Message "Updating..." -Source 'Post-Installation' -LogType 'CMTrace'
+		##Execute-Process -Path "$envSystemDrive\ProgramData\Anaconda3\Scripts\conda.exe" -Parameters "update --all -y" -WindowStyle "Hidden" -WaitForMsiExec
+		##If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 
 
 		## Display a message at the end of the install
@@ -209,7 +231,7 @@ Try {
 		$exitCode = Execute-Process -Path "$env:ProgramData\Anaconda3\Uninstall-Anaconda3.exe" -Parameters "/S"
 		If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 		Write-Log -Message "Waiting for uninstaller..." -Source 'Uninstallation' -LogType 'CMTrace'
-		Start-Sleep -s 120 # Wait for the uninstaller to actually finish
+		Start-Sleep -s 300 # Wait for the uninstaller to actually finish
 
 
 		##*===============================================
@@ -271,8 +293,8 @@ Catch {
 # SIG # Begin signature block
 # MIIU9wYJKoZIhvcNAQcCoIIU6DCCFOQCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUoVEetBdwHMVDw6Ix9Qg+KPXj
-# Q/mgghHXMIIFbzCCBFegAwIBAgIQSPyTtGBVlI02p8mKidaUFjANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUfWauOTjIolFqo6CqpKc7eHEe
+# BV+gghHXMIIFbzCCBFegAwIBAgIQSPyTtGBVlI02p8mKidaUFjANBgkqhkiG9w0B
 # AQwFADB7MQswCQYDVQQGEwJHQjEbMBkGA1UECAwSR3JlYXRlciBNYW5jaGVzdGVy
 # MRAwDgYDVQQHDAdTYWxmb3JkMRowGAYDVQQKDBFDb21vZG8gQ0EgTGltaXRlZDEh
 # MB8GA1UEAwwYQUFBIENlcnRpZmljYXRlIFNlcnZpY2VzMB4XDTIxMDUyNTAwMDAw
@@ -372,13 +394,13 @@ Catch {
 # ZSBTaWduaW5nIENBIFIzNgIRAKVN33D73PFMVIK48rFyyjEwCQYFKw4DAhoFAKB4
 # MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQB
 # gjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkE
-# MRYEFC1ALOplaaw8I3CrpGeqdMMfNJZaMA0GCSqGSIb3DQEBAQUABIIBgIcrGqqG
-# lWk4SzW3E8/N3yJxoHCivpVD5iEX4uHXxYGFinTmj+6TnA0hx6JdOoJiPXNP7miq
-# YwRcd7ivyMvnkDFN9pZqdNK8xP8gKkPSGIwGCQuAl+jGJ8cguujI1ihtoufE3yk0
-# xmaZUyEbJtPQwVGTHs9MWZx8UOu3pwfdneqt0oAqoy1gww7msS4TjABorFNOCKxK
-# 2JRgZnaMOq2WIc7fgujG1PhxYnFvuaFB4kH5QcgXSRBYgvpf8LWn/sfoGsqaSG9a
-# o0gYNEFOE67ISkYSaEijyGMvXpzTuyR6ksi4886jPP0xrWqBjNtGQDDQD6W2MIyV
-# 6OsLvKo6G7bx4tIc4YmIS4qD/SygPMIded5gIxv3+Pk7gDxF2RAETeI9wGO8i9XO
-# H1PzU9y96YtRo6QNPlGsN8jQfuooavIxjo9vXayS1dnI5H37l+sMrn4ZdFFcS+EB
-# UL010C1Ls21Tz4p7Tcuv3HSjSVVYIAPl0HokiIMFpHXvlh5WpqPdJ85Lpg==
+# MRYEFB1LXL6TBA2YP+qHnGVayMENLmeyMA0GCSqGSIb3DQEBAQUABIIBgGU+l7WS
+# lfhhK6BDVg/x1/i48/AaxsdNof8iQshFGDsoh0YKYr1Mey5tytnqJoa1/F0dsyRr
+# 86Jo9cO3XOMhIau71/aIyYcGCHSucLOEMjJGEniUX7rwz1kZydd0HV/uk1fD4h7D
+# qyrj/RSdtcpsL9J5WW2kyYvoJd41ueBHxdCwcQS6sOpi/jamooBS8A1FNwZIaD+S
+# qxKSzJA88Y9hhT7f+rhjG8lHFW9b9Scy3qxFEburUjzrfgQV+/L10qw48lj03OMT
+# EsoMw1MAwWneKQj48ZWDoQVX6wLMX9SXHIwZXqbFPnZdGPmKEnDVvF6Aosb4KnBW
+# 5IUxsckNKAMglxDLXMtCIi8RJWneaPPQeg3L/ur9lFbrjrxe/Fx3YXDDU0hBxJWE
+# SaSkASEGL2o3l4ZSE1AFNue1hErElmnj5TROIyQ+We1TywQw71tOd8MZsT+VZCnq
+# ZHh6eyeIcJ5681Eg91AArrn1WqHUeQ2TkRH59SCTo4b2FzNORNmWcTul6w==
 # SIG # End signature block
